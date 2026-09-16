@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: EducationSystem
+
+  # 1. Подключение к БД (Имя базы должно совпадать с POSTGRES_DB в docker-compose!)
+  datasource:
+    url: jdbc:postgresql://localhost:5433/educationService
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # 2. Настройки JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: validate  # ⚠️ КРИТИЧЕСКИ ВАЖНО: только validate при использовании Liquibase!
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # 3. Настройки Liquibase (явное указание, чтобы не было конфликтов)
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml

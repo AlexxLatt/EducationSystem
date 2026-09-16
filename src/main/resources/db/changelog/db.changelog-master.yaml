@@ -1,0 +1,677 @@
+databaseChangeLog:
+
+  # =========================================================
+  # 1. COURSES
+  # =========================================================
+
+  - changeSet:
+      id: 1-create-courses
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 2. STUDENTS
+  # =========================================================
+
+  - changeSet:
+      id: 2-create-students
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: students
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: second_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 3. TEACHERS
+  # =========================================================
+
+  - changeSet:
+      id: 3-create-teachers
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: teachers
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: second_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 4. GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 4-create-student-group
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: student_group
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+
+  # =========================================================
+  # 5. SCHEDULE
+  # =========================================================
+
+  - changeSet:
+      id: 5-create-schedule
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: schedule
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_student_group
+                    references: student_group(id)
+
+              - column:
+                  name: teacher_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_teacher
+                    references: teachers(id)
+
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_course
+                    references: courses(id)
+
+              - column:
+                  name: class_start_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: class_end_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 6. STUDENTS_GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 6-create-students-groups
+      author: aleksandr
+      changes:
+
+        - createTable:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: students_groups
+            columnNames: student_id, group_id
+            constraintName: pk_students_groups
+
+        - addForeignKeyConstraint:
+            baseTableName: students_groups
+            baseColumnNames: student_id
+            constraintName: fk_students_groups_student
+            referencedTableName: students
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: students_groups
+            baseColumnNames: group_id
+            constraintName: fk_students_group_group
+            referencedTableName: student_group
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+  # =========================================================
+  # 7. INSERT COURSES
+  # =========================================================
+
+  - changeSet:
+      id: 7-insert-courses
+      author: aleksandr
+      changes:
+
+        - insert:
+            tableName: courses
+            columns:
+              - column:
+                  name: name
+                  value: "Математика"
+              - column:
+                  name: description
+                  value: "Курс высшей математики"
+
+        - insert:
+            tableName: courses
+            columns:
+              - column:
+                  name: name
+                  value: "Физика"
+              - column:
+                  name: description
+                  value: "Основы классической физики"
+
+        - insert:
+            tableName: courses
+            columns:
+              - column:
+                  name: name
+                  value: "Программирование"
+              - column:
+                  name: description
+                  value: "Java и Spring Boot"
+
+
+  # =========================================================
+  # 8. INSERT TEACHERS
+  # =========================================================
+
+  - changeSet:
+      id: 8-insert-teachers
+      author: aleksandr
+      changes:
+
+        - insert:
+            tableName: teachers
+            columns:
+              - column:
+                  name: first_name
+                  value: "Иван"
+              - column:
+                  name: second_name
+                  value: "Петров"
+
+        - insert:
+            tableName: teachers
+            columns:
+              - column:
+                  name: first_name
+                  value: "Мария"
+              - column:
+                  name: second_name
+                  value: "Сидорова"
+
+
+  # =========================================================
+  # 9. INSERT STUDENTS
+  # =========================================================
+
+  - changeSet:
+      id: 9-insert-students
+      author: aleksandr
+      changes:
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Алексей"
+              - column:
+                  name: second_name
+                  value: "Смирнов"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Дарья"
+              - column:
+                  name: second_name
+                  value: "Козлова"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Никита"
+              - column:
+                  name: second_name
+                  value: "Волков"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Иван"
+              - column:
+                  name: second_name
+                  value: "Иванов"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Анна"
+              - column:
+                  name: second_name
+                  value: "Петрова"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Максим"
+              - column:
+                  name: second_name
+                  value: "Соколов"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Елена"
+              - column:
+                  name: second_name
+                  value: "Морозова"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Дмитрий"
+              - column:
+                  name: second_name
+                  value: "Попов"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "София"
+              - column:
+                  name: second_name
+                  value: "Новикова"
+
+        - insert:
+            tableName: students
+            columns:
+              - column:
+                  name: first_name
+                  value: "Артём"
+              - column:
+                  name: second_name
+                  value: "Фёдоров"
+
+
+  # =========================================================
+  # 10. INSERT GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 10-insert-student-groups
+      author: aleksandr
+      changes:
+
+        - insert:
+            tableName: student_group
+            columns:
+              - column:
+                  name: name
+                  value: "Группа ИТ-21"
+
+        - insert:
+            tableName: student_group
+            columns:
+              - column:
+                  name: name
+                  value: "Группа ИТ-22"
+
+
+  # =========================================================
+  # 11. INSERT STUDENTS INTO GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 11-insert-students-groups
+      author: aleksandr
+      changes:
+
+        # =============================================
+        # Группа ИТ-21
+        # =============================================
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 1
+              - column:
+                  name: group_id
+                  value: 1
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 2
+              - column:
+                  name: group_id
+                  value: 1
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 3
+              - column:
+                  name: group_id
+                  value: 1
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 4
+              - column:
+                  name: group_id
+                  value: 1
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 5
+              - column:
+                  name: group_id
+                  value: 1
+
+
+        # =============================================
+        # Группа ИТ-22
+        # =============================================
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 6
+              - column:
+                  name: group_id
+                  value: 2
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 7
+              - column:
+                  name: group_id
+                  value: 2
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 8
+              - column:
+                  name: group_id
+                  value: 2
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 9
+              - column:
+                  name: group_id
+                  value: 2
+
+        - insert:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  value: 10
+              - column:
+                  name: group_id
+                  value: 2
+
+
+  # =========================================================
+  # 12. INSERT SCHEDULE
+  # =========================================================
+
+  - changeSet:
+      id: 12-insert-schedule
+      author: aleksandr
+      changes:
+
+        - insert:
+            tableName: schedule
+            columns:
+              - column:
+                  name: group_id
+                  value: 1
+              - column:
+                  name: teacher_id
+                  value: 1
+              - column:
+                  name: course_id
+                  value: 3
+              - column:
+                  name: class_start_date
+                  value: "2026-09-15T09:00:00"
+              - column:
+                  name: class_end_date
+                  value: "2026-09-15T10:30:00"
+
+        - insert:
+            tableName: schedule
+            columns:
+              - column:
+                  name: group_id
+                  value: 1
+              - column:
+                  name: teacher_id
+                  value: 2
+              - column:
+                  name: course_id
+                  value: 1
+              - column:
+                  name: class_start_date
+                  value: "2026-09-15T11:00:00"
+              - column:
+                  name: class_end_date
+                  value: "2026-09-15T12:30:00"
+
+  - changeSet:
+      id: 13-add-cascade-to-schedule-group
+      author: aleksandr
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: schedule
+            constraintName: fk_schedule_student_group
+
+        - addForeignKeyConstraint:
+            baseTableName: schedule
+            baseColumnNames: group_id
+            constraintName: fk_schedule_student_group
+            referencedTableName: student_group
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+
+  - changeSet:
+      id: 13-insert-schedule
+      author: aleksandr
+      changes:
+
+        # ИТ-21 — программирование
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 1 }
+              - column: { name: teacher_id, value: 1 }
+              - column: { name: course_id, value: 3 }
+              - column: { name: class_start_date, value: "2026-09-16T09:00:00" }
+              - column: { name: class_end_date, value: "2026-09-16T10:30:00" }
+
+        # ИТ-21 — математика
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 1 }
+              - column: { name: teacher_id, value: 2 }
+              - column: { name: course_id, value: 1 }
+              - column: { name: class_start_date, value: "2026-09-16T11:00:00" }
+              - column: { name: class_end_date, value: "2026-09-16T12:30:00" }
+
+        # ИТ-21 — физика
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 1 }
+              - column: { name: teacher_id, value: 1 }
+              - column: { name: course_id, value: 2 }
+              - column: { name: class_start_date, value: "2026-09-17T09:00:00" }
+              - column: { name: class_end_date, value: "2026-09-17T10:30:00" }
+
+        # ИТ-21 — программирование
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 1 }
+              - column: { name: teacher_id, value: 1 }
+              - column: { name: course_id, value: 3 }
+              - column: { name: class_start_date, value: "2026-09-18T13:00:00" }
+              - column: { name: class_end_date, value: "2026-09-18T14:30:00" }
+
+        # ИТ-22 — математика
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 2 }
+              - column: { name: teacher_id, value: 2 }
+              - column: { name: course_id, value: 1 }
+              - column: { name: class_start_date, value: "2026-09-16T09:00:00" }
+              - column: { name: class_end_date, value: "2026-09-16T10:30:00" }
+
+        # ИТ-22 — физика
+        - insert:
+            tableName: schedule
+            columns:
+              - column: { name: group_id, value: 2 }
+              - column: { name: teacher_id, value: 1 }
+              - column: { name: course_id, value: 2 }
+              - column: { name: class_start_date, value: "2026-09-16T11:00:00" }
+              - column: { name: class_end_date, value: "2026-09-19T14:30:00" }
