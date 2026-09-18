@@ -23,6 +23,8 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
     private final RequestStudentMapper requestStudentMapper;
+    private static final String NOT_FOUND_MASSAGE = "Студента с таким Id нет";
+    private static final String NOT_FOUND_GROUP_MASSAGE = "Группа с таким id не найдена";
 
     public Page<RequestStudentDto> findAllStudent(Pageable pageable) {
 
@@ -32,7 +34,7 @@ public class StudentService {
 
     public RequestStudentDto findStudent(Long id) {
 
-        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Студента с таким Id нет"));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_MASSAGE));
 
         return requestStudentMapper.toDto(student);
 
@@ -40,7 +42,7 @@ public class StudentService {
 
     public RequestStudentDto changeStudent(StudentDto studentDto, Long id) {
 
-        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Студента с таким Id нет"));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_MASSAGE));
 
         student.setFirstName(studentDto.firstName());
 
@@ -51,7 +53,7 @@ public class StudentService {
     }
 
     public void  deleteStudent(Long id){
-        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException("Студента с таким Id нет"));
+        Student student = studentRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_MASSAGE));
         studentRepository.delete(student);
     }
 
@@ -68,8 +70,8 @@ public class StudentService {
 
 
     public RequestStudentDto leaveGroup(Long groupId ,Long studentId){
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Группы с таким Id нет"));
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Студента с таким Id нет"));
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(NOT_FOUND_GROUP_MASSAGE));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException(NOT_FOUND_MASSAGE));
 
         student.getGroups().remove(group);
         studentRepository.save(student);
@@ -79,8 +81,8 @@ public class StudentService {
 
     public RequestStudentDto joinGroup(Long groupId ,Long studentId){
 
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException("Группы с таким Id нет"));
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException("Студента с таким Id нет"));
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new NotFoundException(NOT_FOUND_GROUP_MASSAGE));
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> new NotFoundException(NOT_FOUND_MASSAGE));
 
         if(group.getStudents().contains(student)){
             throw new BadRequestException("Студент уже находится в этой группе");

@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/v1/students")
 @RequiredArgsConstructor
 public class StudentController {
     private final StudentService studentService;
@@ -21,7 +21,7 @@ public class StudentController {
             description = "Делает Get запрос c параметром Pageable"
     )
     @GetMapping()
-    public Page<RequestStudentDto> getAllStudent(Pageable pageable) {
+    public Page<RequestStudentDto> getAllStudents(Pageable pageable) {
         return studentService.findAllStudent(pageable);
     }
 
@@ -66,7 +66,7 @@ public class StudentController {
             description = "Put запрос с 2 id параметрами"
     )
     @PutMapping("/joinGroup/{id}")
-    public RequestStudentDto joiGroup(@PathVariable Long id, @RequestParam Long groupId) {
+    public RequestStudentDto joinGroup(@PathVariable Long id, @RequestParam Long groupId) {
         return studentService.joinGroup(groupId,id);
     }
 
@@ -75,7 +75,7 @@ public class StudentController {
             description = "Put запрос с 2 id параметрами"
     )
     @PutMapping("/leaveGroup/{id}")
-    public RequestStudentDto leftGroup(@PathVariable Long id, @RequestParam Long groupId) {
+    public RequestStudentDto leaveGroup(@PathVariable Long id, @RequestParam Long groupId) {
         return studentService.leaveGroup(groupId,id);
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/api/v1/courses")
 @RequiredArgsConstructor
 public class CourseController {
 
@@ -23,7 +23,7 @@ public class CourseController {
             description = "Делает Get запрос c параметром Pageable"
     )
     @GetMapping()
-    public Page<RequestCourseDto> getAllCourse(Pageable pageable) {
+    public Page<RequestCourseDto> getAllCourses(Pageable pageable) {
         return courseService.findAllCourse(pageable);
     }
 

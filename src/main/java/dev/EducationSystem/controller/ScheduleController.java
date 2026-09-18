@@ -2,6 +2,7 @@ package dev.EducationSystem.controller;
 
 import dev.EducationSystem.dto.ScheduleDto;
 import dev.EducationSystem.dto.request.RequestScheduleDto;
+import dev.EducationSystem.dto.request.RequestScheduleForTeacherDto;
 import dev.EducationSystem.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/api/v1/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
 
@@ -23,7 +26,7 @@ public class ScheduleController {
             description = "Делает Get запрос c параметром Pageable"
     )
     @GetMapping()
-    public Page<RequestScheduleDto> findAllSchedule(Pageable pageable) {
+    public Page<RequestScheduleDto> findAllSchedules(Pageable pageable) {
         return scheduleService.getAllSchedule(pageable);
     }
 
@@ -34,6 +37,24 @@ public class ScheduleController {
     @GetMapping("/{id}")
     public RequestScheduleDto findSchedule(@PathVariable Long id) {
         return scheduleService.getSchedule(id);
+    }
+
+    @Operation(
+            summary = "Получение расписания для группы",
+            description = "Get запрос с id параметром"
+    )
+    @GetMapping("/group/{id}")
+    public List<RequestScheduleDto> findCourseScheduleForGroup(@PathVariable Long id){
+        return scheduleService.findScheduleCursesForGroup(id);
+    }
+
+    @Operation(
+            summary = "Получение расписания для учителя",
+            description = "Get запрос с id параметром"
+    )
+    @GetMapping("/teacher/{id}")
+    public List<RequestScheduleForTeacherDto> findScheduleForTeacher(@PathVariable Long id){
+       return  scheduleService.findScheduleForTeacher(id);
     }
 
     @Operation(
@@ -62,4 +83,5 @@ public class ScheduleController {
     public void deleteSchedule(@PathVariable Long id) {
         scheduleService.deleteSchedule(id);
     }
+
 }

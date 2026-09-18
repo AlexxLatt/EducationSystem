@@ -2,13 +2,14 @@ package dev.EducationSystem.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Информация о студенте")
 public record StudentDto(
 
-
         @Schema(description = "Уникальный идентификатор", example = "1")
+        @NotNull(message = "Значение id не должен быть null")
         Long id,
 
         @Schema(description = "Имя", required = true, example = "Алексей")

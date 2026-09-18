@@ -20,6 +20,7 @@ public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final ScheduleRepository scheduleRepository;
     private final RequestTeacherMapper requestTeacherMapper;
+    private static final String NOT_FOUND_TEACHER_MASSAGE = "Учитель с таким id не найден";
 
     public Page<RequestTeacherDto> findAllTeacher(Pageable pageable){
 
@@ -28,13 +29,13 @@ public class TeacherService {
 
 
     public RequestTeacherDto getTeacher(Long id) {
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException("Учителя с таким Id нет"));
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_TEACHER_MASSAGE));
         return requestTeacherMapper.toDto(teacher);
     }
 
     public RequestTeacherDto changeTeacher(TeacherDto teacherDto, Long id) {
 
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException("Учителя с таким Id нет"));
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_TEACHER_MASSAGE));
 
         teacher.setFirstName(teacherDto.firstName());
         teacher.setSecondName(teacherDto.secondName());
@@ -45,8 +46,8 @@ public class TeacherService {
     }
 
     public void deleteTeacher(Long id){
-        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException("Учителя с таким Id нет"));
-        if (scheduleRepository.findByTeacherId(id).isPresent()) {
+        Teacher teacher = teacherRepository.findById(id).orElseThrow(() -> new NotFoundException(NOT_FOUND_TEACHER_MASSAGE));
+        if (!scheduleRepository.findByTeacherId(id).isEmpty()) {
             throw new BadRequestException(
                     "Нельзя удалить преподавателя: он есть в расписании"
             );

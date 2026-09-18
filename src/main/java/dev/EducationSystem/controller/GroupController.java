@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/group")
+@RequestMapping("/api/v1/groups")
 @RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
@@ -22,7 +22,7 @@ public class GroupController {
             description = "Делает Get запрос c параметром Pageable"
     )
     @GetMapping()
-    public Page<RequestGroupDto> getAllGroup(@PageableDefault(page = 0, size = 3) Pageable pageable) {
+    public Page<RequestGroupDto> getAllGroups(@PageableDefault(page = 0, size = 3) Pageable pageable) {
         return groupService.findAllGroup(pageable);
     }
 

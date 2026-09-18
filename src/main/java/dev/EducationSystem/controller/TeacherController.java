@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/teacher")
+@RequestMapping("/api/v1/teachers")
 @RequiredArgsConstructor
 public class TeacherController {
     private final TeacherService teacherService;
@@ -22,7 +22,7 @@ public class TeacherController {
             description = "Делает Get запрос c параметром Pageable"
     )
     @GetMapping()
-    public Page<RequestTeacherDto> getAllTeacher(Pageable pageable){
+    public Page<RequestTeacherDto> getAllTeachers(Pageable pageable) {
         return teacherService.findAllTeacher(pageable);
     }
 
@@ -31,7 +31,7 @@ public class TeacherController {
             description = "Get запрос с id параметром"
     )
     @GetMapping("/{id}")
-    public RequestTeacherDto getTeacher(@PathVariable Long id){
+    public RequestTeacherDto getTeacher(@PathVariable Long id) {
         return teacherService.getTeacher(id);
     }
 
@@ -40,7 +40,7 @@ public class TeacherController {
             description = "Post запрос с телом запроса"
     )
     @PostMapping()
-    public RequestTeacherDto createTeacher(@Validated @RequestBody TeacherDto teacherDto){
+    public RequestTeacherDto createTeacher(@Validated @RequestBody TeacherDto teacherDto) {
         return teacherService.createTeacher(teacherDto);
     }
 
@@ -49,8 +49,8 @@ public class TeacherController {
             description = "Put запрос с телом запроса и id параметром"
     )
     @PutMapping("/{id}")
-    public RequestTeacherDto updateTeacher(@Validated @RequestBody TeacherDto teacherDto , @PathVariable Long id){
-        return teacherService.changeTeacher(teacherDto,id);
+    public RequestTeacherDto updateTeacher(@Validated @RequestBody TeacherDto teacherDto, @PathVariable Long id) {
+        return teacherService.changeTeacher(teacherDto, id);
     }
 
     @Operation(
@@ -58,7 +58,7 @@ public class TeacherController {
             description = "DELETE запрос с id параметром"
     )
     @DeleteMapping("/{id}")
-    public void deleteTeacher(@PathVariable Long id){
+    public void deleteTeacher(@PathVariable Long id) {
         teacherService.deleteTeacher(id);
     }
 

@@ -18,6 +18,8 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final RequestCourseMapper requestCourseMapper;
+    private static final String COURSE_NOT_FOUND_MESSAGE = "Курса с таким Id нет";
+
 
     public Page<RequestCourseDto> findAllCourse(Pageable pageable) {
 
@@ -25,19 +27,19 @@ public class CourseService {
     }
 
     public RequestCourseDto findCourse(Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Курса с таким Id нет"));
+        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException(COURSE_NOT_FOUND_MESSAGE));
         return requestCourseMapper.toDto(course);
     }
 
     public RequestCourseDto changeCourse(CourseDto courseDto, Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Курса с таким Id нет"));
+        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException(COURSE_NOT_FOUND_MESSAGE));
         course.setName(courseDto.name());
         course.setDescription(courseDto.description());
         return requestCourseMapper.toDto(course);
     }
 
     public void deleteCourse(Long id) {
-        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException("Курса с таким Id нет"));
+        Course course = courseRepository.findById(id).orElseThrow(() -> new NotFoundException(COURSE_NOT_FOUND_MESSAGE));
 
         courseRepository.delete(course);
     }
