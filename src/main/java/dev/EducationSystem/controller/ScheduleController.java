@@ -3,6 +3,7 @@ package dev.EducationSystem.controller;
 import dev.EducationSystem.dto.ScheduleDto;
 import dev.EducationSystem.dto.request.RequestScheduleDto;
 import dev.EducationSystem.dto.request.RequestScheduleForTeacherDto;
+import dev.EducationSystem.filter.ScheduleFilter;
 import dev.EducationSystem.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class ScheduleController {
     )
     @GetMapping()
     public Page<RequestScheduleDto> findAllSchedules(Pageable pageable) {
-        return scheduleService.getAllSchedule(pageable);
+        return scheduleService.getAllSchedules(pageable);
     }
 
     @Operation(
@@ -40,12 +41,12 @@ public class ScheduleController {
     }
 
     @Operation(
-            summary = "Получение расписания для группы",
-            description = "Get запрос с id параметром"
+            summary = "Фильтр по расписанию",
+            description = "Get запрос параметром с ModelAttribute параметрами"
     )
-    @GetMapping("/group/{id}")
-    public List<RequestScheduleDto> findCourseScheduleForGroup(@PathVariable Long id){
-        return scheduleService.findScheduleCursesForGroup(id);
+    @GetMapping("/filter")
+    public Page<RequestScheduleDto> findCoursesScheduleForGroup(@ModelAttribute ScheduleFilter filter, Pageable pageable){
+        return scheduleService.findScheduleCursesForGroup(filter, pageable);
     }
 
     @Operation(

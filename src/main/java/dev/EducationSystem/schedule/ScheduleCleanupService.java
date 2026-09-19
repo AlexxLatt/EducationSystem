@@ -16,7 +16,7 @@ public class ScheduleCleanupService {
 
     @Scheduled(cron = "${app.scheduler.delete-old-schedules.cron}")
     public void deleteOldSchedules() {
-        LocalDateTime limit = LocalDateTime.now().minusDays(1);
+        LocalDateTime limit = LocalDateTime.now().minusYears(1);
         scheduleRepository.deleteByClassEndDateBefore(limit);
     }
 

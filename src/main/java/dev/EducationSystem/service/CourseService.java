@@ -21,7 +21,7 @@ public class CourseService {
     private static final String COURSE_NOT_FOUND_MESSAGE = "Курса с таким Id нет";
 
 
-    public Page<RequestCourseDto> findAllCourse(Pageable pageable) {
+    public Page<RequestCourseDto> findAllCourses(Pageable pageable) {
 
         return courseRepository.findAll(pageable).map(requestCourseMapper::toDto);
     }

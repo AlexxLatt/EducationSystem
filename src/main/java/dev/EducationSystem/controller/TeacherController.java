@@ -23,7 +23,7 @@ public class TeacherController {
     )
     @GetMapping()
     public Page<RequestTeacherDto> getAllTeachers(Pageable pageable) {
-        return teacherService.findAllTeacher(pageable);
+        return teacherService.findAllTeachers(pageable);
     }
 
     @Operation(

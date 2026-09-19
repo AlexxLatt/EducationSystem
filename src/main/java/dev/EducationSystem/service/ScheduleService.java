@@ -43,7 +43,7 @@ public class ScheduleService {
     private static final String NOT_FOUND_TEACHER_MASSAGE = "Учитель с таким id не найден";
     private static final String BAD_REQUEST_TEACHER_MASSAGE = "Учитель уже занят";
 
-    public Page<RequestScheduleDto> getAllSchedule(Pageable pageable) {
+    public Page<RequestScheduleDto> getAllSchedules(Pageable pageable) {
         return scheduleRepository.findAll(pageable).map(requestScheduleMapper::toDto);
     }
 
@@ -90,17 +90,12 @@ public class ScheduleService {
 
     }
 
-    public List<RequestScheduleDto> findScheduleCursesForGroup(Long groupId) {
+    public Page<RequestScheduleDto> findScheduleCursesForGroup(ScheduleFilter scheduleFilter, Pageable pageable) {
 
-        ScheduleFilter filter = new ScheduleFilter();
-        filter.setGroupId(groupId);
+        Specification<Schedule> spec = ScheduleSpecifications.findScheduleCursesForGroup(scheduleFilter);
 
-        Specification<Schedule> spec = ScheduleSpecifications.findScheduleCursesForGroup(filter);
-        List<Schedule> schedules = scheduleRepository.findAll(spec);
-
-        return schedules.stream()
-                .map(requestScheduleMapper::toDto)
-                .toList();
+        return scheduleRepository.findAll(spec, pageable)
+                .map(requestScheduleMapper::toDto);
     }
 
     public List<RequestScheduleForTeacherDto> findScheduleForTeacher(Long id) {

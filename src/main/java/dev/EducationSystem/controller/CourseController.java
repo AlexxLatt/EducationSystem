@@ -24,7 +24,7 @@ public class CourseController {
     )
     @GetMapping()
     public Page<RequestCourseDto> getAllCourses(Pageable pageable) {
-        return courseService.findAllCourse(pageable);
+        return courseService.findAllCourses(pageable);
     }
 
     @Operation(

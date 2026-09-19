@@ -26,7 +26,7 @@ public class StudentService {
     private static final String NOT_FOUND_MASSAGE = "Студента с таким Id нет";
     private static final String NOT_FOUND_GROUP_MASSAGE = "Группа с таким id не найдена";
 
-    public Page<RequestStudentDto> findAllStudent(Pageable pageable) {
+    public Page<RequestStudentDto> findAllStudents(Pageable pageable) {
 
         return studentRepository.findAll(pageable).map(requestStudentMapper::toDto);
 

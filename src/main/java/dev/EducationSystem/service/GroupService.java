@@ -28,7 +28,7 @@ public class GroupService {
     private static final String BAD_REQUEST_STUDENT_MASSAGE = "Студент не находится в этой группе";
 
 
-    public Page<RequestGroupDto> findAllGroup(Pageable pageable) {
+    public Page<RequestGroupDto> findAllGroups(Pageable pageable) {
 
         return groupRepository.findAll(pageable).map(requestGroupMapper::toDto);
     }

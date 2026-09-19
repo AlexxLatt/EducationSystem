@@ -22,7 +22,7 @@ public class TeacherService {
     private final RequestTeacherMapper requestTeacherMapper;
     private static final String NOT_FOUND_TEACHER_MASSAGE = "Учитель с таким id не найден";
 
-    public Page<RequestTeacherDto> findAllTeacher(Pageable pageable){
+    public Page<RequestTeacherDto> findAllTeachers(Pageable pageable){
 
         return teacherRepository.findAll(pageable).map(requestTeacherMapper::toDto);
     }

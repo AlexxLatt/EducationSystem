@@ -23,7 +23,7 @@ public class GroupController {
     )
     @GetMapping()
     public Page<RequestGroupDto> getAllGroups(@PageableDefault(page = 0, size = 3) Pageable pageable) {
-        return groupService.findAllGroup(pageable);
+        return groupService.findAllGroups(pageable);
     }
 
     @Operation(

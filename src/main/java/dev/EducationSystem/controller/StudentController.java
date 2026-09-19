@@ -22,7 +22,7 @@ public class StudentController {
     )
     @GetMapping()
     public Page<RequestStudentDto> getAllStudents(Pageable pageable) {
-        return studentService.findAllStudent(pageable);
+        return studentService.findAllStudents(pageable);
     }
 
     @Operation(
