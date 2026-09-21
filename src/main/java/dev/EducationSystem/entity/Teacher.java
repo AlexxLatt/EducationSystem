@@ -1,9 +1,13 @@
 package dev.EducationSystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,4 +26,12 @@ public class Teacher {
     @Column(name = "second_name")
     private String secondName;
 
+
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "teacher",
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true
+    )
+    private List<Schedule> schedules = new ArrayList<>();
 }
