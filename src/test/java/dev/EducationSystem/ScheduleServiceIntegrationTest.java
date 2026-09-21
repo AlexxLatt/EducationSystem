@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,10 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        properties = "server.port=8085"
+)
 public class ScheduleServiceIntegrationTest extends AbstractIt {
 
 
@@ -94,14 +99,13 @@ public class ScheduleServiceIntegrationTest extends AbstractIt {
     @Test
     void shouldFindScheduleByGroup() {
 
-        String url = "/api/v1/schedules/filter"
+        String url = "http://localhost:8085/api/v1/schedules/filter"
                 + "?groupId=" + group.getId()
                 + "&page=0"
                 + "&size=10";
 
 
-        ResponseEntity<String> response =
-                restTemplate.getForEntity(url, String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
         assertEquals(200, response.getStatusCode().value());
         System.out.println(response.getBody());

@@ -70,7 +70,11 @@
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
-
+		<!-- Веб-приложение / REST API / embedded Tomcat -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<!-- 5. Swagger / OpenAPI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
