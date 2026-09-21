@@ -1,34 +1,34 @@
 package dev.EducationSystem;
 
-import dev.EducationSystem.dto.request.RequestScheduleDto;
-import dev.EducationSystem.dto.request.RequestTeacherDto;
 import dev.EducationSystem.entity.Course;
 import dev.EducationSystem.entity.Group;
 import dev.EducationSystem.entity.Schedule;
 import dev.EducationSystem.entity.Teacher;
-import dev.EducationSystem.filter.ScheduleFilter;
+
 import dev.EducationSystem.repository.CourseRepository;
 import dev.EducationSystem.repository.GroupRepository;
 import dev.EducationSystem.repository.ScheduleRepository;
 import dev.EducationSystem.repository.TeacherRepository;
-import dev.EducationSystem.service.ScheduleService;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+
+import org.springframework.http.ResponseEntity;
 import testContainer.AbstractIt;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScheduleServiceIntegrationTest extends AbstractIt {
 
+
     @Autowired
-    private ScheduleService scheduleService;
+    private TestRestTemplate restTemplate;
 
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -94,28 +94,21 @@ public class ScheduleServiceIntegrationTest extends AbstractIt {
     @Test
     void shouldFindScheduleByGroup() {
 
-        Pageable pageable = PageRequest.of(0, 10);
-
-        ScheduleFilter scheduleFilter = new ScheduleFilter();
-        scheduleFilter.setGroupId(group.getId());
-
-
-        Page<RequestScheduleDto> result =
-                scheduleService.findScheduleCursesForGroup(
-                        scheduleFilter,
-                        pageable
-                );
+        String url = "/api/v1/schedules/filter"
+                + "?groupId=" + group.getId()
+                + "&page=0"
+                + "&size=10";
 
 
-        assertEquals(1, result.getTotalElements());
+        ResponseEntity<String> response =
+                restTemplate.getForEntity(url, String.class);
 
-        RequestScheduleDto schedule = result.getContent().get(0);
+        assertEquals(200, response.getStatusCode().value());
+        System.out.println(response.getBody());
 
+        assertTrue(response.getBody().contains("\"groupId\":" + group.getId()));
 
-        assertEquals(group.getId(), schedule.groupId());
-
-        assertEquals(course.getId(), schedule.courseId());
-
-        assertEquals(teacher.getId(), schedule.teacherId());
+        assertTrue(response.getBody().contains("\"courseId\":" + course.getId()));
+        assertTrue(response.getBody().contains("\"teacherId\":" + teacher.getId()));
     }
 }

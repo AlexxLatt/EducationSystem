@@ -91,7 +91,6 @@ public class ScheduleService {
     }
 
     public Page<RequestScheduleDto> findScheduleCursesForGroup(ScheduleFilter scheduleFilter, Pageable pageable) {
-
         Specification<Schedule> spec = ScheduleSpecifications.findScheduleCursesForGroup(scheduleFilter);
 
         return scheduleRepository.findAll(spec, pageable)
