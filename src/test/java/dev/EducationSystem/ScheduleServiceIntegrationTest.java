@@ -1,5 +1,7 @@
 package dev.EducationSystem;
 
+import dev.EducationSystem.dto.ScheduleDto;
+import dev.EducationSystem.dto.request.RequestScheduleDto;
 import dev.EducationSystem.entity.Course;
 import dev.EducationSystem.entity.Group;
 import dev.EducationSystem.entity.Schedule;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import testContainer.AbstractIt;
 
@@ -25,10 +29,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-        properties = "server.port=8085"
-)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ScheduleServiceIntegrationTest extends AbstractIt {
 
 
@@ -93,26 +94,148 @@ public class ScheduleServiceIntegrationTest extends AbstractIt {
     @AfterEach
     void tearDown() {
         scheduleRepository.deleteAll();
+        groupRepository.deleteAll();
+        teacherRepository.deleteAll();
+        courseRepository.deleteAll();
     }
 
 
     @Test
     void shouldFindScheduleByGroup() {
 
-        String url = "http://localhost:8085/api/v1/schedules/filter"
+        String url = "/api/v1/schedules/filter"
                 + "?groupId=" + group.getId()
                 + "&page=0"
                 + "&size=10";
 
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        ResponseEntity<PageResponse<RequestScheduleDto>> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<PageResponse<RequestScheduleDto>>() {}
+                );
 
         assertEquals(200, response.getStatusCode().value());
-        System.out.println(response.getBody());
+        assertTrue(response.getBody().content().stream().allMatch(dto-> dto.groupId().equals(group.getId())));
 
-        assertTrue(response.getBody().contains("\"groupId\":" + group.getId()));
+    }
 
-        assertTrue(response.getBody().contains("\"courseId\":" + course.getId()));
-        assertTrue(response.getBody().contains("\"teacherId\":" + teacher.getId()));
+    @Test
+    void shouldFindScheduleByGroupAndTeacher() {
+
+        String url = "/api/v1/schedules/filter"
+                + "?groupId=" + group.getId()
+                + "&teacherId=" + teacher.getId()
+                + "&page=0"
+                + "&size=10";
+
+
+        ResponseEntity<PageResponse<RequestScheduleDto>> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<PageResponse<RequestScheduleDto>>() {}
+                );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertTrue(
+                response.getBody()
+                        .content()
+                        .stream()
+                        .anyMatch(dto -> dto.groupId().equals(group.getId()))
+        );
+
+        assertTrue(
+                response.getBody()
+                        .content()
+                        .stream()
+                        .anyMatch(dto -> dto.teacherId().equals(teacher.getId()))
+        );
+
+
+    }
+
+    @Test
+    void shouldFindScheduleByTeacherAndCourse() {
+
+        String url = "/api/v1/schedules/filter"
+                + "?courseId=" + course.getId()
+                + "&teacherId=" + teacher.getId()
+                + "&page=0"
+                + "&size=10";
+
+
+        ResponseEntity<PageResponse<RequestScheduleDto>> response =
+                restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<PageResponse<RequestScheduleDto>>() {}
+                );
+
+
+        assertEquals(200, response.getStatusCode().value());
+        assertTrue(
+                response.getBody()
+                        .content()
+                        .stream()
+                        .anyMatch(dto -> dto.teacherId().equals(teacher.getId()))
+        );
+
+        assertTrue(
+                response.getBody()
+                        .content()
+                        .stream()
+                        .anyMatch(dto -> dto.courseId().equals(course.getId()))
+        );
+
+    }
+
+
+    @Test
+    void shouldCreateSchedule() {
+
+        Teacher newTeacher = new Teacher();
+        newTeacher.setFirstName("Пётр");
+        newTeacher.setSecondName("Петров");
+
+        newTeacher = teacherRepository.save(newTeacher);
+
+        TestScheduleDto request = new TestScheduleDto(
+                group.getId(),
+                newTeacher.getId(),
+                course.getId(),
+                LocalDateTime.of(2026, 9, 22, 10, 0),
+                LocalDateTime.of(2026, 9, 22, 11, 30)
+        );
+
+        ResponseEntity<RequestScheduleDto> response =
+                restTemplate.postForEntity(
+                        "/api/v1/schedules",
+                        request,
+                        RequestScheduleDto.class
+                );
+
+        System.out.println("STATUS = " + response.getStatusCode());
+        System.out.println("BODY = " + response.getBody());
+
+        assertEquals(200, response.getStatusCode().value());
+
+        Schedule schedule = scheduleRepository
+                .findAll()
+                .stream()
+                .filter(s ->
+                        s.getClassStartDate()
+                                .equals(LocalDateTime.of(2026, 9, 22, 10, 0))
+                )
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(group.getId(), schedule.getGroup().getId());
+        assertEquals(newTeacher.getId(), schedule.getTeacher().getId());
+        assertEquals(course.getId(), schedule.getCourse().getId());
     }
 }
