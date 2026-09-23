@@ -1,0 +1,246 @@
+databaseChangeLog:
+
+  # =========================================================
+  # 1. COURSES
+  # =========================================================
+
+  - changeSet:
+      id: 1-create-courses
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: courses
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 2. STUDENTS
+  # =========================================================
+
+  - changeSet:
+      id: 2-create-students
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: students
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: second_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 3. TEACHERS
+  # =========================================================
+
+  - changeSet:
+      id: 3-create-teachers
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: teachers
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: second_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 4. GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 4-create-student-group
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: student_group
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+
+  # =========================================================
+  # 5. SCHEDULE
+  # =========================================================
+
+  - changeSet:
+      id: 5-create-schedule
+      author: aleksandr
+      changes:
+        - createTable:
+            tableName: schedule
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_student_group
+                    references: student_group(id)
+
+              - column:
+                  name: teacher_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_teacher
+                    references: teachers(id)
+
+              - column:
+                  name: course_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_schedule_course
+                    references: courses(id)
+
+              - column:
+                  name: class_start_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: class_end_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+
+  # =========================================================
+  # 6. STUDENTS_GROUPS
+  # =========================================================
+
+  - changeSet:
+      id: 6-create-students-groups
+      author: aleksandr
+      changes:
+
+        - createTable:
+            tableName: students_groups
+            columns:
+              - column:
+                  name: student_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: group_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: students_groups
+            columnNames: student_id, group_id
+            constraintName: pk_students_groups
+
+        - addForeignKeyConstraint:
+            baseTableName: students_groups
+            baseColumnNames: student_id
+            constraintName: fk_students_groups_student
+            referencedTableName: students
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: students_groups
+            baseColumnNames: group_id
+            constraintName: fk_students_group_group
+            referencedTableName: student_group
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+
+  # =========================================================
+  # 7. ADD CASCADE TO SCHEDULE
+  # =========================================================
+
+  - changeSet:
+      id: 13-add-cascade-to-schedule
+      author: aleksandr
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: schedule
+            constraintName: fk_schedule_student_group
+
+        - addForeignKeyConstraint:
+            baseTableName: schedule
+            baseColumnNames: group_id
+            constraintName: fk_schedule_student_group
+            referencedTableName: student_group
+            referencedColumnNames: id
+            onDelete: CASCADE
